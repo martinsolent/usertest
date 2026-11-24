@@ -1,0 +1,44 @@
+{
+  "id": "greenleaf",
+  "title": "Greenleaf Café ordering test",
+  "guide": {
+    "name": "Sam",
+    "role": "Greenleaf Café · your guide"
+  },
+  "minutes": 5,
+  "welcome": "Hi, I'm Sam. Thanks for helping us test our new ordering site. I'll talk you through four short tasks, one at a time. There are no wrong answers. We're testing the site, not you.",
+  "prototype": {
+    "start": "index.html"
+  },
+  "tasks": [
+    {
+      "title": "Find the vegan options",
+      "say": "Have a look around and find the food and drinks that are vegan.",
+      "audio": { "type": "voice" },
+      "check": { "type": "page", "match": "menu.html#vegan" }
+    },
+    {
+      "title": "Add an oat milk flat white to your basket",
+      "say": "Choose a flat white, make it with oat milk, and add it to your basket.",
+      "audio": { "type": "voice" },
+      "check": { "type": "click", "match": "#add-flat-white" }
+    },
+    {
+      "title": "Change the collection time to 12:30",
+      "say": "You can only pick your order up at half past twelve. Change the collection time to match.",
+      "audio": { "type": "voice" },
+      "check": { "type": "manual" }
+    },
+    {
+      "title": "Go to checkout, but stop before paying",
+      "say": "Head to the checkout. When you reach the payment page, stop there.",
+      "audio": { "type": "voice" },
+      "check": { "type": "page", "match": "pay.html" }
+    }
+  ],
+  "thanks": "Your answers help us fix the confusing bits before the site goes live.",
+  "results": {
+    "type": "download"
+  },
+  "voice": "en-GB"
+}
