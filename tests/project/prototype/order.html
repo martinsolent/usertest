@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your order – Greenleaf Café</title>
+<link rel="stylesheet" href="site.css">
+<script src="basket.js"></script>
+</head>
+<body>
+<header>
+  <a class="logo" href="index.html">Greenleaf</a>
+  <nav>
+    <a href="menu.html">Menu</a>
+    <a href="order.html">Order ahead</a>
+    <a href="index.html#find-us">Find us</a>
+    <a href="order.html"><strong>Basket (<span class="basket-count">0</span>)</strong></a>
+  </nav>
+</header>
+<main>
+  <h1>Your order</h1>
+  <div class="panel">
+    <ul id="items" style="margin:0;padding-left:20px;line-height:1.8"></ul>
+    <p id="empty" style="margin:0">Your basket is empty. <a href="menu.html">Browse the menu</a></p>
+  </div>
+  <div class="panel">
+    <label style="display:flex;flex-direction:column;gap:8px;max-width:280px">Collection time
+      <select id="time" style="padding:8px;border-radius:6px;border:1px solid #D8D2C2;font:inherit">
+        <option>As soon as possible</option>
+        <option>12:00</option>
+        <option>12:15</option>
+        <option>12:30</option>
+        <option>12:45</option>
+        <option>13:00</option>
+      </select>
+    </label>
+  </div>
+  <a class="btn" href="pay.html">Go to checkout</a>
+  <button class="btn secondary" type="button" onclick="Basket.clear(); location.reload()">Empty basket</button>
+</main>
+<script>
+  const items = Basket.get();
+  const ul = document.getElementById('items');
+  items.forEach(i => { const li = document.createElement('li'); li.textContent = i; ul.appendChild(li); });
+  document.getElementById('empty').hidden = items.length > 0;
+  ul.hidden = items.length === 0;
+  const t = document.getElementById('time');
+  t.value = localStorage.getItem('greenleaf-time') || t.value;
+  t.addEventListener('change', () => localStorage.setItem('greenleaf-time', t.value));
+</script>
+</body>
+</html>
