@@ -4,6 +4,8 @@ A small user testing tool that runs on GitHub Pages. Testers open a link and see
 
 It's built for websites tested on a laptop or desktop. It doesn't work on phones, and it says so if someone opens it on one.
 
+[Builder Page for creating JSON](https://martinsolent.github.io/usertest/builder.html) **Do this last**
+
 ## What's in the folder
 
 ```
