@@ -218,7 +218,7 @@
 <script>
 (() => {
   // Which test to run: index.html?test=folder-name (folders live in tests/)
-  const DEFAULT_TEST = 'greenleaf';
+  const DEFAULT_TEST = 'quietspace';
   const params = new URLSearchParams(location.search);
   const testId = (params.get('test') || DEFAULT_TEST).replace(/[^a-z0-9_-]/gi, '');
   const base = 'tests/' + testId + '/';
