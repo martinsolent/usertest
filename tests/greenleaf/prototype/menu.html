@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu – Greenleaf Café</title>
+<link rel="stylesheet" href="site.css">
+<script src="basket.js"></script>
+</head>
+<body>
+<header>
+  <a class="logo" href="index.html">Greenleaf</a>
+  <nav>
+    <a href="menu.html">Menu</a>
+    <a href="order.html">Order ahead</a>
+    <a href="index.html#find-us">Find us</a>
+    <a href="order.html"><strong>Basket (<span class="basket-count">0</span>)</strong></a>
+  </nav>
+</header>
+<main>
+  <h1>Menu</h1>
+  <div class="chips">
+    <a href="#coffee">Coffee</a>
+    <a href="#food">Food</a>
+    <a href="#vegan">Vegan</a>
+  </div>
+
+  <section id="coffee">
+    <h2>Coffee</h2>
+    <div class="grid">
+      <div class="item">
+        <div class="pic"></div>
+        <strong>Flat white</strong><span>£3.20</span>
+        <label>Milk
+          <select id="fw-milk">
+            <option>Whole milk</option>
+            <option>Semi-skimmed</option>
+            <option>Oat milk</option>
+            <option>Soya milk</option>
+          </select>
+        </label>
+        <button class="btn" id="add-flat-white" type="button">Add to basket</button>
+        <span class="added" id="fw-added" role="status"></span>
+      </div>
+      <div class="item">
+        <div class="pic"></div>
+        <strong>Americano</strong><span>£2.80</span>
+        <button class="btn secondary" id="add-americano" type="button">Add to basket</button>
+      </div>
+      <div class="item">
+        <div class="pic"></div>
+        <strong>Latte</strong><span>£3.40</span>
+        <button class="btn secondary" id="add-latte" type="button">Add to basket</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="food">
+    <h2>Food</h2>
+    <div class="grid">
+      <div class="item"><div class="pic" style="background:#E3EBDD"></div><strong>Breakfast bap</strong><span>£4.50 · until 11:30</span></div>
+      <div class="item"><div class="pic" style="background:#F1E4D6"></div><strong>Cinnamon bun</strong><span>£2.60</span></div>
+      <div class="item"><div class="pic" style="background:#EFE9DA"></div><strong>Cheese toastie</strong><span>£5.20</span></div>
+    </div>
+  </section>
+
+  <section id="vegan">
+    <h2>Vegan</h2>
+    <div class="grid">
+      <div class="item"><div class="pic" style="background:#E3EBDD"></div><strong>Vegan breakfast bap</strong><span>£4.80</span><span class="tag">Vegan</span></div>
+      <div class="item"><div class="pic" style="background:#E3EBDD"></div><strong>Banana bread</strong><span>£2.90</span><span class="tag">Vegan</span></div>
+      <div class="item"><div class="pic"></div><strong>Any coffee with oat or soya</strong><span>No extra charge</span><span class="tag">Vegan</span></div>
+    </div>
+  </section>
+</main>
+<script>
+  document.getElementById('add-flat-white').addEventListener('click', () => {
+    const milk = document.getElementById('fw-milk').value;
+    Basket.add('Flat white, ' + milk.toLowerCase());
+    document.getElementById('fw-added').textContent = 'Added: flat white with ' + milk.toLowerCase();
+  });
+  document.getElementById('add-americano').addEventListener('click', () => Basket.add('Americano'));
+  document.getElementById('add-latte').addEventListener('click', () => Basket.add('Latte'));
+</script>
+</body>
+</html>

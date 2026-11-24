@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#F6F8FA; --text:#1F2328; --muted:#59636E; --line:#D0D7DE; --soft:#EAEEF2; --blue:#0969DA; --blue-soft:#DDF4FF; --green:#1A7F37; --red:#CF222E; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; color: var(--text); background: var(--bg); }
+  button, input, select, textarea { font-family: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 32px; background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+  .top .title span { display: block; font-size: 13px; color: var(--muted); }
+  .top .title strong { font-size: 20px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn { min-height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--line); background: #fff; font-size: 15px; color: var(--text); display: inline-flex; align-items: center; gap: 8px; }
+  .btn.primary { border: none; background: var(--green); color: #fff; font-weight: 700; }
+  .btn.add { border: 1px dashed var(--blue); color: var(--blue); font-weight: 500; align-self: flex-start; }
+  .btn.small { min-height: 36px; font-size: 14px; padding: 0 12px; }
+  .file-btn { position: relative; overflow: hidden; }
+  .file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .layout { display: flex; flex-wrap: wrap; gap: 24px; padding: 24px 32px 60px; max-width: 1440px; margin: 0 auto; }
+  .form { flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+  aside { flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  section { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  section h2 { margin: 0; font-size: 18px; }
+  .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } .top, .layout { padding-left: 16px; padding-right: 16px; } }
+  label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500; }
+  input[type=text], input[type=url], input[type=number], textarea, select { font-size: 15px; font-weight: 400; padding: 9px 12px; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--text); width: 100%; }
+  textarea { line-height: 1.5; resize: vertical; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+  .help { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; font-weight: 400; }
+  .task { border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .task:focus-within { border-color: var(--blue); }
+  .task-head { display: flex; align-items: center; gap: 10px; }
+  .num { width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex: 0 0 auto; }
+  .task-head strong { flex: 1 1 auto; font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .icon { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: #fff; display: flex; align-items: center; justify-content: center; color: var(--text); flex: 0 0 auto; }
+  .icon.del { color: var(--red); }
+  .icon:disabled { opacity: .35; cursor: default; }
+  pre { margin: 0; background: #0D1117; color: #E6EDF3; border-radius: 12px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; overflow: auto; max-height: 60vh; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.55; }
+  .card h3 { margin: 0; font-size: 15px; }
+  .card ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  .card code { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; background: var(--bg); padding: 1px 5px; border-radius: 4px; word-break: break-all; }
+  .note { font-size: 13px; color: var(--muted); }
+  .flash { font-size: 14px; color: var(--green); }
+  .error { color: var(--red); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="title">
+    <span>Test builder</span>
+    <strong id="headTitle">New test</strong>
+  </div>
+  <div class="actions">
+    <span class="flash" id="flash" role="status"></span>
+    <label class="btn file-btn">Open test.json
+      <input type="file" accept=".json,application/json" id="openFile">
+    </label>
+    <button type="button" class="btn" id="previewBtn">Preview as tester</button>
+    <button type="button" class="btn primary" id="downloadBtn">Download test.json</button>
+  </div>
+</div>
+
+<div class="layout">
+  <form class="form" id="form" novalidate onsubmit="return false">
+
+    <section>
+      <h2>1. About the test</h2>
+      <div class="row">
+        <label>Test name
+          <input type="text" id="title" placeholder="e.g. Café ordering test">
+        </label>
+        <label>Folder name
+          <input type="text" id="testId" class="mono" placeholder="e.g. cafe-ordering">
+          <span class="help">Lowercase letters, numbers and dashes. The test lives in <span class="mono">tests/&lt;folder&gt;/</span></span>
+        </label>
+      </div>
+      <div class="row">
+        <label>Guide's name
+          <input type="text" id="guideName" placeholder="e.g. Sam">
+        </label>
+        <label>Guide's role
+          <input type="text" id="guideRole" placeholder="e.g. Greenleaf Café · your guide">
+        </label>
+      </div>
+      <div class="row">
+        <label>Guide photo file (optional)
+          <input type="text" id="guidePhoto" class="mono" placeholder="guide.jpg">
+          <span class="help">Upload the image into the test folder, then type its file name here.</span>
+        </label>
+        <label>Roughly how many minutes?
+          <input type="number" id="minutes" min="1" max="120" placeholder="5">
+        </label>
+      </div>
+      <label>Welcome message (shown and read aloud)
+        <textarea id="welcome" rows="3"></textarea>
+      </label>
+    </section>
+
+    <section>
+      <h2>2. Prototype</h2>
+      <label>Start page
+        <input type="text" id="protoStart" class="mono" placeholder="index.html">
+        <span class="help">Upload your prototype's HTML files into <span class="mono">tests/<span class="fname">&lt;folder&gt;</span>/prototype/</span> and give the first page here. You can paste a full https:// link to another website instead, but then testers tick every task off themselves, because browsers don't let one site watch another.</span>
+      </label>
+    </section>
+
+    <section>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2>3. Tasks</h2>
+        <span class="note" id="taskCount"></span>
+      </div>
+      <div id="tasks" style="display:flex;flex-direction:column;gap:14px"></div>
+      <button type="button" class="btn add" id="addTask">+ Add a task</button>
+    </section>
+
+    <section>
+      <h2>4. Finish and results</h2>
+      <label>Thank-you message
+        <textarea id="thanks" rows="2"></textarea>
+      </label>
+      <label>Where do results go?
+        <select id="resultsType" style="max-width:420px">
+          <option value="sheet">Google Sheet (via Apps Script)</option>
+          <option value="download">Tester downloads a results file</option>
+        </select>
+      </label>
+      <label id="sheetUrlWrap">Apps Script web app URL
+        <input type="url" id="sheetUrl" class="mono" placeholder="https://script.google.com/macros/s/…/exec">
+        <span class="help">See the README for the two-minute setup. If the sheet can't be reached, the tester is offered a results file instead.</span>
+      </label>
+    </section>
+  </form>
+
+  <aside>
+    <div class="card">
+      <h3>Publishing this test</h3>
+      <ol>
+        <li>Upload the prototype files to <code id="pPath">tests/&lt;folder&gt;/prototype/</code></li>
+        <li>Press <strong>Download test.json</strong> and upload it to <code id="jPath">tests/&lt;folder&gt;/</code>, replacing the old one</li>
+        <li>Give testers this link:<br><code id="shareLink"></code></li>
+      </ol>
+      <p class="note" style="margin:0">GitHub Pages can take a minute or two to show changes.</p>
+    </div>
+    <pre id="preview" aria-label="test.json preview"></pre>
+  </aside>
+</div>
+
+<template id="taskTpl">
+  <div class="task">
+    <div class="task-head">
+      <span class="num"></span>
+      <strong class="t-head"></strong>
+      <button type="button" class="icon up" aria-label="Move task up"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></button>
+      <button type="button" class="icon down" aria-label="Move task down"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <button type="button" class="icon del" aria-label="Delete task"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg></button>
+    </div>
+    <label>Task title
+      <input type="text" data-k="title" placeholder="e.g. Find the opening times">
+    </label>
+    <label>Instruction (shown in the panel and spoken)
+      <textarea rows="2" data-k="say"></textarea>
+    </label>
+    <div class="row">
+      <label>Audio
+        <select data-k="audioType">
+          <option value="voice">Read it out with the browser voice</option>
+          <option value="file">Play my own recording</option>
+          <option value="none">No audio</option>
+        </select>
+      </label>
+      <label class="audio-file">Recording file name
+        <input type="text" data-k="audioSrc" class="mono" placeholder="audio/task1.mp3">
+        <span class="help">Upload the MP3 into the test folder.</span>
+      </label>
+      <div class="audio-listen" style="display:flex;align-items:flex-end">
+        <button type="button" class="btn small listen">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"/></svg>
+          Listen
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <label>How is it ticked off?
+        <select data-k="checkType">
+          <option value="page">Tester reaches a page or section</option>
+          <option value="click">Tester clicks a button or link</option>
+          <option value="manual">Tester presses "I've done this"</option>
+        </select>
+      </label>
+      <label class="match-wrap"><span class="match-label">Page or section</span>
+        <input type="text" data-k="checkMatch" class="mono">
+        <span class="help match-help"></span>
+      </label>
+    </div>
+    <p class="help">Testers always see an "I've done this" button too, in case the automatic check misses.</p>
+  </div>
+</template>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  let tasks = [];
+
+  const blank = () => ({
+    title: '', say: '', audio: { type: 'voice' }, check: { type: 'manual' }
+  });
+
+  // ---------- read / write the form ----------
+  function fillForm(t) {
+    $('title').value = t.title || '';
+    $('testId').value = t.id || '';
+    $('guideName').value = (t.guide || {}).name || '';
+    $('guideRole').value = (t.guide || {}).role || '';
+    $('guidePhoto').value = (t.guide || {}).photo || '';
+    $('minutes').value = t.minutes || '';
+    $('welcome').value = t.welcome || '';
+    $('protoStart').value = (t.prototype || {}).start || 'index.html';
+    $('thanks').value = t.thanks || '';
+    $('resultsType').value = (t.results || {}).type || 'sheet';
+    $('sheetUrl').value = (t.results || {}).url || '';
+    tasks = (t.tasks || []).map(x => ({
+      title: x.title || '', say: x.say || '',
+      audio: Object.assign({ type: 'voice' }, x.audio || {}),
+      check: Object.assign({ type: 'manual' }, x.check || {})
+    }));
+    if (!tasks.length) tasks.push(blank());
+    renderTasks();
+    update();
+  }
+
+  function collect() {
+    const out = {
+      id: slug($('testId').value),
+      title: $('title').value.trim(),
+      guide: { name: $('guideName').value.trim(), role: $('guideRole').value.trim() },
+      welcome: $('welcome').value.trim(),
+      prototype: { start: $('protoStart').value.trim() || 'index.html' },
+      tasks: tasks.map(t => {
+        const o = { title: t.title.trim(), say: t.say.trim() };
+        o.audio = t.audio.type === 'file' ? { type: 'file', src: (t.audio.src || '').trim() } : { type: t.audio.type };
+        o.check = t.check.type === 'manual' ? { type: 'manual' } : { type: t.check.type, match: (t.check.match || '').trim() };
+        return o;
+      }),
+      thanks: $('thanks').value.trim(),
+      results: $('resultsType').value === 'sheet' ? { type: 'sheet', url: $('sheetUrl').value.trim() } : { type: 'download' },
+      voice: 'en-GB'
+    };
+    const photo = $('guidePhoto').value.trim();
+    if (photo) out.guide.photo = photo;
+    const mins = parseInt($('minutes').value, 10);
+    if (mins > 0) out.minutes = mins;
+    return out;
+  }
+
+  function slug(s) { return (s || '').toLowerCase().trim().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, ''); }
+
+  // ---------- task cards ----------
+  function renderTasks() {
+    const box = $('tasks');
+    box.innerHTML = '';
+    tasks.forEach((t, i) => {
+      const el = $('taskTpl').content.firstElementChild.cloneNode(true);
+      el.querySelector('.num').textContent = i + 1;
+      el.querySelector('.t-head').textContent = t.title || 'New task';
+      const f = k => el.querySelector('[data-k="' + k + '"]');
+      f('title').value = t.title;
+      f('say').value = t.say;
+      f('audioType').value = t.audio.type;
+      f('audioSrc').value = t.audio.src || '';
+      f('checkType').value = t.check.type;
+      f('checkMatch').value = t.check.match || '';
+      const sync = () => {
+        el.querySelector('.audio-file').hidden = f('audioType').value !== 'file';
+        el.querySelector('.audio-listen').hidden = f('audioType').value !== 'voice';
+        const ct = f('checkType').value;
+        el.querySelector('.match-wrap').hidden = ct === 'manual';
+        el.querySelector('.match-label').textContent = ct === 'page' ? 'Page or section' : 'Button or link text';
+        f('checkMatch').placeholder = ct === 'page' ? 'e.g. menu.html#vegan' : 'e.g. Add to basket';
+        el.querySelector('.match-help').textContent = ct === 'page'
+          ? 'A page in the prototype folder, with #section if needed. pay.html matches that page; menu.html#vegan only matches when the vegan section is open.'
+          : 'The words on the button or link. If you know CSS you can give a selector instead, like #add-to-basket.';
+      };
+      sync();
+      el.addEventListener('input', e => {
+        const k = e.target.dataset.k;
+        if (!k) return;
+        const v = e.target.value;
+        if (k === 'title') { t.title = v; el.querySelector('.t-head').textContent = v || 'New task'; }
+        else if (k === 'say') t.say = v;
+        else if (k === 'audioType') t.audio.type = v;
+        else if (k === 'audioSrc') t.audio.src = v;
+        else if (k === 'checkType') t.check.type = v;
+        else if (k === 'checkMatch') t.check.match = v;
+        sync();
+        update();
+      });
+      const up = el.querySelector('.up'), down = el.querySelector('.down');
+      up.disabled = i === 0; down.disabled = i === tasks.length - 1;
+      up.addEventListener('click', () => move(i, -1, '.up'));
+      down.addEventListener('click', () => move(i, 1, '.down'));
+      el.querySelector('.del').addEventListener('click', () => {
+        if (tasks.length === 1) { tasks[0] = blank(); }
+        else tasks.splice(i, 1);
+        renderTasks(); update();
+      });
+      el.querySelector('.listen').addEventListener('click', () => speak('Task ' + (i + 1) + '. ' + t.title + '. ' + t.say));
+      box.appendChild(el);
+    });
+    $('taskCount').textContent = tasks.length + ' task' + (tasks.length === 1 ? '' : 's');
+  }
+
+  function move(i, d, sel) {
+    const j = i + d;
+    if (j < 0 || j >= tasks.length) return;
+    [tasks[i], tasks[j]] = [tasks[j], tasks[i]];
+    renderTasks(); update();
+    const btn = $('tasks').children[j].querySelector(sel);
+    (btn.disabled ? $('tasks').children[j].querySelector('input') : btn).focus();
+  }
+
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const v = speechSynthesis.getVoices().find(v => v.lang === 'en-GB');
+    if (v) u.voice = v;
+    u.lang = 'en-GB';
+    speechSynthesis.speak(u);
+  }
+
+  // ---------- live preview, links, autosave ----------
+  function update() {
+    const t = collect();
+    $('preview').textContent = JSON.stringify(t, null, 2);
+    $('headTitle').textContent = t.title || 'New test';
+    const folder = t.id || '<folder>';
+    $('pPath').textContent = 'tests/' + folder + '/prototype/';
+    $('jPath').textContent = 'tests/' + folder + '/';
+    document.querySelectorAll('.fname').forEach(n => n.textContent = folder);
+    const here = location.href.replace(/builder\.html.*$/, '');
+    $('shareLink').textContent = here + 'index.html?test=' + folder;
+    $('sheetUrlWrap').hidden = $('resultsType').value !== 'sheet';
+    try { localStorage.setItem('usertest-builder-draft', JSON.stringify(t)); } catch (e) {}
+  }
+
+  function flash(msg, isError) {
+    const f = $('flash');
+    f.className = isError ? 'error' : 'flash';
+    f.textContent = msg;
+    clearTimeout(flash.t);
+    flash.t = setTimeout(() => f.textContent = '', 4000);
+  }
+
+  function problems(t) {
+    if (!t.id) return 'Give the test a folder name first.';
+    if (!t.tasks.some(x => x.title)) return 'Add at least one task with a title.';
+    const bad = t.tasks.findIndex(x => x.check.type !== 'manual' && !x.check.match);
+    if (bad >= 0) return 'Task ' + (bad + 1) + ' needs a page or button to check for.';
+    return '';
+  }
+
+  $('form').addEventListener('input', update);
+  $('form').addEventListener('change', update);
+  $('addTask').addEventListener('click', () => {
+    tasks.push(blank()); renderTasks(); update();
+    const last = $('tasks').lastElementChild;
+    last.querySelector('input').focus();
+  });
+
+  $('downloadBtn').addEventListener('click', () => {
+    const t = collect();
+    const p = problems(t);
+    if (p) { flash(p, true); return; }
+    const blob = new Blob([JSON.stringify(t, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'test.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    flash('test.json downloaded. Now upload it to tests/' + t.id + '/');
+  });
+
+  $('previewBtn').addEventListener('click', () => {
+    const t = collect();
+    const p = problems(t);
+    if (p) { flash(p, true); return; }
+    localStorage.setItem('usertest-preview', JSON.stringify(t));
+    window.open('index.html?test=' + encodeURIComponent(t.id) + '&preview=1', '_blank');
+  });
+
+  $('openFile').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const t = JSON.parse(await file.text());
+      fillForm(t);
+      flash('Opened ' + file.name);
+    } catch (err) { flash("That file isn't a valid test.json", true); }
+    e.target.value = '';
+  });
+
+  // ---------- start: ?test=folder loads that test, else the last draft ----------
+  (async () => {
+    const id = new URLSearchParams(location.search).get('test');
+    if (id) {
+      try {
+        const r = await fetch('tests/' + slug(id) + '/test.json', { cache: 'no-store' });
+        if (!r.ok) throw new Error();
+        const t = await r.json();
+        t.id = t.id || slug(id);
+        fillForm(t);
+        flash('Loaded tests/' + slug(id) + '/test.json');
+        return;
+      } catch (e) { flash("Couldn't load that test, starting a new one", true); }
+    }
+    let draft = null;
+    try { draft = JSON.parse(localStorage.getItem('usertest-builder-draft') || 'null'); } catch (e) {}
+    fillForm(draft || {
+      welcome: "Hi, thanks for helping us test this website. I'll guide you through a few short tasks, one at a time. There are no wrong answers. We're testing the site, not you.",
+      thanks: 'Your answers help us fix the confusing bits.',
+      tasks: []
+    });
+  })();
+})();
+</script>
+</body>
+</html>
