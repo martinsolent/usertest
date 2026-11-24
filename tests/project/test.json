@@ -1,42 +1,47 @@
 {
-  "id": "greenleaf",
-  "title": "Greenleaf Café ordering test",
+  "id": "quietspace",
+  "title": "Quiet Space",
   "guide": {
     "name": "Sam",
-    "role": "Greenleaf Café · your guide"
+    "role": "Quiet Space Guide"
   },
-  "minutes": 5,
-  "welcome": "Hi, I'm Sam. Thanks for helping us test our new ordering site. I'll talk you through four short tasks, one at a time. There are no wrong answers. We're testing the site, not you.",
+  "welcome": "Hi, thanks for helping us test this website. I'll guide you through a few short tasks, one at a time. There are no wrong answers. We're testing the site, not you.",
   "prototype": {
     "start": "index.html"
   },
   "tasks": [
     {
-      "title": "Find the vegan options",
-      "say": "Have a look around and find the food and drinks that are vegan.",
-      "audio": { "type": "voice" },
-      "check": { "type": "page", "match": "menu.html#vegan" }
+      "title": "Book a room",
+      "say": "You've got a group project meeting with three coursemates tomorrow afternoon. You need somewhere quiet from 2pm to 4pm. Use the app to find a room and book it",
+      "audio": {
+        "type": "voice"
+      },
+      "check": {
+        "type": "manual"
+      }
     },
     {
-      "title": "Add an oat milk flat white to your basket",
-      "say": "Choose a flat white, make it with oat milk, and add it to your basket.",
-      "audio": { "type": "voice" },
-      "check": { "type": "click", "match": "#add-flat-white" }
+      "title": "Check the booking",
+      "say": "One of your group has messaged asking where you're meeting. Find the details of the booking you just made.",
+      "audio": {
+        "type": "voice"
+      },
+      "check": {
+        "type": "manual"
+      }
     },
     {
-      "title": "Change the collection time to 12:30",
-      "say": "You can only pick your order up at half past twelve. Change the collection time to match.",
-      "audio": { "type": "voice" },
-      "check": { "type": "manual" }
-    },
-    {
-      "title": "Go to checkout, but stop before paying",
-      "say": "Head to the checkout. When you reach the payment page, stop there.",
-      "audio": { "type": "voice" },
-      "check": { "type": "page", "match": "pay.html" }
+      "title": "Book a room with step-free access",
+      "say": "Another week, one of your group uses a wheelchair. Book a room for 6 people this Friday from 11am to 1pm that has step-free access",
+      "audio": {
+        "type": "voice"
+      },
+      "check": {
+        "type": "manual"
+      }
     }
   ],
-  "thanks": "Your answers help us fix the confusing bits before the site goes live.",
+  "thanks": "Your answers help us fix the confusing bits.",
   "results": {
     "type": "download"
   },
