@@ -4,8 +4,6 @@ A small user testing tool that runs on GitHub Pages. Testers open a link and see
 
 It's built for websites tested on a laptop or desktop. It doesn't work on phones, and it says so if someone opens it on one.
 
-[Builder Page for creating JSON](https://martinsolent.github.io/usertest/builder.html) **Do this last**
-
 ## What's in the folder
 
 ```
@@ -13,7 +11,7 @@ index.html          the page testers use
 builder.html        forms for making and editing tests
 apps-script/Code.gs the Google Sheets script that receives results
 tests/
-  quietspace/       a sample test you can try straight away
+  greenleaf/        a sample test you can try straight away
     test.json       the tasks, guide, messages and settings
     prototype/      the website being tested (plain HTML files)
 ```
@@ -24,7 +22,7 @@ tests/
 2. Upload everything in this folder to it (Add file › Upload files, then drag the files and folders in).
 3. Go to Settings › Pages. Under "Branch" choose `main` and `/ (root)`, then press Save.
 4. After a minute or two the test is live at
-   `https://<your-username>.github.io/usertest/?test=quietspace`
+   `https://<your-username>.github.io/usertest/?test=greenleaf`
 
 ## Making a new test
 
@@ -52,7 +50,7 @@ Testers can always press "I've done this" or "I'm stuck, skip this task" as well
 
 Automatic checks only work when the prototype is inside the `prototype/` folder. If you give the start page as a link to another website, it still loads, but testers have to tick tasks off themselves, because browsers don't let one site watch another.
 
-If two buttons have the same words (like several "Add to basket" buttons), give the right one an `id` in the HTML and use the selector.
+If two buttons have the same words (like several "Add to basket" buttons), give the right one an `id` in the HTML and use the selector, as in the sample test.
 
 ## Audio
 
@@ -74,10 +72,10 @@ Each finished test adds one row per task with the outcome, how it was ticked off
 
 If you change the script later, use Deploy › Manage deployments › Edit › New version, so the URL stays the same.
 
-The sample Quiet Space test is set to "download" so it works without a sheet.
+The sample Greenleaf test is set to "download" so it works without a sheet.
 
 ## Things to know
 
 - Results that are saved to the sheet can't be checked from the tester's side (Google doesn't allow it), so testers are always offered a "Download a copy" button as a backup.
-- Prototypes that use `localStorage` keep their data between testers on the same computer. If you're running a lab session, clear it between testers or add a reset button.
+- Prototypes that use `localStorage` (like the sample basket) keep their data between testers on the same computer. If you're running a lab session, clear it between testers or add a reset button.
 - Anyone with the Apps Script URL could send rows to your sheet. Keep the URL to your class and make a fresh sheet for each study.
